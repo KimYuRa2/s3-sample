@@ -85,6 +85,14 @@ app.post('/save-details', (req, res) => {
 });
 
 
+/* CORS */
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next();
+});
+
+
 app.listen( port, () =>{
   console.log(`express 실행 http://localhost:${port}`); 
 })
