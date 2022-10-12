@@ -14,6 +14,13 @@
 const express = require('express');
 const aws = require('aws-sdk');
 const cors = require('cors');
+//# 환경변수 관리 ( "dotenv"사용 : 어떤 os에서 개발하더라도 , 동일하게 환경변수를 등록하고 가져올 수 있게됨.)
+const dotenv = require("dotenv");
+// # 환경변수 관리
+dotenv.config(); //config(현재디렉토리의 .env파일을 자동으로 인식하여 환경변수 세팅)라는 메서드를 실행하면, dotenv라는 모듈이 자동적으로 .env에 등록돼있는 변수들을 node.js에서 접근할 수 있도록  "process.env.환경변수"에 등록을 시켜줌!!
+console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
+console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
 /*
  * Set-up and run the Express app.
  */
@@ -36,7 +43,7 @@ aws.config.region = 'eu-west-1';
 /*
  * Load the S3 information from the environment variables.
  */
-const S3_BUCKET = process.env.S3_BUCKET;
+const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
 
 /*
  * Respond to GET requests to /account.
@@ -57,7 +64,7 @@ app.get('/sign-s3', (req, res) => {
   const fileName = req.query['file-name'];
   const fileType = req.query['file-type'];
   const s3Params = {
-    Bucket: S3_BUCKET,
+    Bucket: S3_BUCKET_NAME,
     Key: fileName,
     Expires: 60,
     ContentType: fileType,
@@ -71,7 +78,7 @@ app.get('/sign-s3', (req, res) => {
     }
     const returnData = {
       signedRequest: data,
-      url: `https://${S3_BUCKET}.s3.amazonaws.com/${fileName}`
+      url: `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`
     };
     res.write(JSON.stringify(returnData));
     res.end();
