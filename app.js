@@ -13,7 +13,7 @@
  */
 const express = require('express');
 const aws = require('aws-sdk');
-
+const cors = require('cors');
 /*
  * Set-up and run the Express app.
  */
@@ -24,6 +24,7 @@ app.engine('html', require('ejs').renderFile);
 // app.listen(process.env.PORT || 3000);
 const port = process.env.PORT ||3000; 
 
+app.use(cors());
 
 
 
@@ -86,11 +87,11 @@ app.post('/save-details', (req, res) => {
 
 
 /* CORS */
-app.all('/*', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "X-Requested-With");
-  next();
-});
+// app.all('/*', function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
+//   next();
+// });
 
 
 app.listen( port, () =>{
