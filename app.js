@@ -23,7 +23,6 @@ app.use(express.static('./public'));
 app.engine('html', require('ejs').renderFile);
 // app.listen(process.env.PORT || 3000);
 const port = process.env.PORT ||3000; 
-
 app.use(cors());
 
 
@@ -43,6 +42,9 @@ const S3_BUCKET = process.env.S3_BUCKET;
  * Respond to GET requests to /account.
  * Upon request, render the 'account.html' web page in views/ directory.
  */
+app.get('/', (req, res) => {
+	res.send('Hello, World!');
+});
 app.get('/account', (req, res) => res.render('account.html'));
 
 /*
