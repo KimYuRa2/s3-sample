@@ -38,7 +38,8 @@ app.use(cors());
  * Configure the AWS region of the target bucket.
  * Remember to change this to the relevant region.
  */
-aws.config.region = 'eu-west-1';
+// aws.config.region = 'eu-west-1';
+aws.config.region = 'ap-northeast-2';
 
 /*
  * Load the S3 information from the environment variables.
