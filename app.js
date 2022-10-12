@@ -1,8 +1,6 @@
 /*
  Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-
  http://www.apache.org/licenses/LICENSE-2.0
-
  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 */
 
@@ -20,6 +18,7 @@ dotenv.config(); //config(현재디렉토리의 .env파일을 자동으로 인�
 console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
 console.log("AWS_SECRET_ACCESS_KEY:", process.env.AWS_SECRET_ACCESS_KEY);
 console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
+
 /*
  * Set-up and run the Express app.
  */
@@ -27,16 +26,14 @@ const app = express();
 app.set('views', './views');
 app.use(express.static('./public'));
 app.engine('html', require('ejs').renderFile);
-// app.listen(process.env.PORT || 3000);
 const port = process.env.PORT ||3000; 
-
-
-
+app.listen( port, () =>{
+  console.log(`express 실행 http://localhost:${port}`); 
+})
 /*
  * Configure the AWS region of the target bucket.
  * Remember to change this to the relevant region.
  */
-// aws.config.region = 'eu-west-1';
 aws.config.region = 'ap-northeast-2';
 
 /*
@@ -48,9 +45,6 @@ const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
  * Respond to GET requests to /account.
  * Upon request, render the 'account.html' web page in views/ directory.
  */
-app.get('/', (req, res) => {
-	res.send('Hello, World!');
-});
 app.get('/account', (req, res) => res.render('account.html'));
 
 /*
@@ -90,19 +84,7 @@ app.get('/sign-s3', (req, res) => {
  * a way that suits your application.
  */
 app.post('/save-details', (req, res) => {
-  // TODO: Read POSTed form data and do something useful
-  res.send("OK");
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify("Request Success"));
 });
 
-
-/* CORS */
-// app.all('/*', function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header("Access-Control-Allow-Headers", "X-Requested-With");
-//   next();
-// });
-
-
-app.listen( port, () =>{
-  console.log(`express 실행 http://localhost:${port}`); 
-})
