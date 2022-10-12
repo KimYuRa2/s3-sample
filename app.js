@@ -13,7 +13,6 @@
  */
 const express = require('express');
 const aws = require('aws-sdk');
-const cors = require('cors');
 //# 환경변수 관리 ( "dotenv"사용 : 어떤 os에서 개발하더라도 , 동일하게 환경변수를 등록하고 가져올 수 있게됨.)
 const dotenv = require("dotenv");
 // # 환경변수 관리
@@ -30,7 +29,6 @@ app.use(express.static('./public'));
 app.engine('html', require('ejs').renderFile);
 // app.listen(process.env.PORT || 3000);
 const port = process.env.PORT ||3000; 
-app.use(cors());
 
 
 
@@ -93,6 +91,7 @@ app.get('/sign-s3', (req, res) => {
  */
 app.post('/save-details', (req, res) => {
   // TODO: Read POSTed form data and do something useful
+  res.send("OK");
 });
 
 
