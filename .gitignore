@@ -2,3 +2,4 @@ node_modules/
 *.sw*
 *.env
 .DS_Store
+awsconfig.json

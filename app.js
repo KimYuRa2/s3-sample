@@ -1,9 +1,3 @@
-/*
- Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
- http://www.apache.org/licenses/LICENSE-2.0
- Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-*/
-
 
 /*
  * Import required packages.
@@ -11,6 +5,16 @@
  */
 const express = require('express');
 const aws = require('aws-sdk');
+const multerS3 = require("multer-s3");
+const path = require('path'); //설치X
+const multer = require('multer');
+const fs = require('fs'); // 설치 x
+
+const router = express.Router();
+
+// aws.config.loadFromPath(__dirname + "config/awsconfig.json");
+aws.config.loadFromPath('./config/awsconfig.json');
+
 //# 환경변수 관리 ( "dotenv"사용 : 어떤 os에서 개발하더라도 , 동일하게 환경변수를 등록하고 가져올 수 있게됨.)
 const dotenv = require("dotenv");
 // # 환경변수 관리
@@ -30,61 +34,49 @@ const port = process.env.PORT ||3000;
 app.listen( port, () =>{
   console.log(`express 실행 http://localhost:${port}`); 
 })
-/*
- * Configure the AWS region of the target bucket.
- * Remember to change this to the relevant region.
- */
-aws.config.region = 'ap-northeast-2';
 
-/*
- * Load the S3 information from the environment variables.
- */
-const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;
+let s3 = new aws.S3();
 
-/*
- * Respond to GET requests to /account.
- * Upon request, render the 'account.html' web page in views/ directory.
- */
-app.get('/account', (req, res) => res.render('account.html'));
+let upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: "heynature",
+    key: function (req, file, cb) {
+      let extension = path.extname(file.originalname);
+      cb(null, Date.now().toString() + extension)
+    },
+    acl: 'public-read-write',
+  })
+})
 
-/*
- * Respond to GET requests to /sign-s3.
- * Upon request, return JSON containing the temporarily-signed S3 request and
- * the anticipated URL of the image.
- */
-app.get('/sign-s3', (req, res) => {
-  const s3 = new aws.S3();
-  const fileName = req.query['file-name'];
-  const fileType = req.query['file-type'];
-  const s3Params = {
-    Bucket: S3_BUCKET_NAME,
-    Key: fileName,
-    Expires: 60,
-    ContentType: fileType,
-    ACL: 'public-read'
-  };
 
-  s3.getSignedUrl('putObject', s3Params, (err, data) => {
-    if(err){
-      console.log(err);
-      return res.end();
-    }
-    const returnData = {
-      signedRequest: data,
-      url: `https://${S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`
-    };
-    res.write(JSON.stringify(returnData));
-    res.end();
-  });
+app.post('/upload', upload.single("imgFile"), function(req, res, next){
+  let imgFile = req.file;
+  res.json(imgFile);
+})
+
+app.get('/upload', function(req, res, next) {
+  res.render('upload.html');
 });
 
-/*
- * Respond to POST requests to /submit_form.
- * This function needs to be completed to handle the information in
- * a way that suits your application.
- */
-app.post('/save-details', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify("Request Success"));
-});
 
+
+// //* aws region 및 자격증명 설정
+// /* https://velog.io/@gbskang/Heroku%EC%97%90%EC%84%9C-AWS-S3-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0  */
+// aws.config.update({
+//   accessKeyId: process.env.S3_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+//   region: 'ap-northeast-2',
+// });
+
+// const upload = multer({
+//   storage: multerS3({
+//     s3: new aws.S3(),
+//     bucket: 'heynature',
+//     key(req, file, cb) {
+//       cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`);
+//       //original이란 폴더를 만들고 그 곳에 넣는 것
+//     },
+//   }),
+//   limits: { fileSize: 20 * 1024 * 1024 },
+// });
