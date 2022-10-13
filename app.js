@@ -13,7 +13,7 @@ const fs = require('fs'); // 설치 x
 const router = express.Router();
 
 // aws.config.loadFromPath(__dirname + "config/awsconfig.json");
-aws.config.loadFromPath(__dirname + '/config/awsconfig.json');
+// aws.config.loadFromPath('./config/awsconfig.json');
 
 //# 환경변수 관리 ( "dotenv"사용 : 어떤 os에서 개발하더라도 , 동일하게 환경변수를 등록하고 가져올 수 있게됨.)
 const dotenv = require("dotenv");
